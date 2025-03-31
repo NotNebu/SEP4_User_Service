@@ -1,4 +1,4 @@
-name: Build gRPC User Microservice
+name: Build and Push gRPC User Microservice
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,5 +28,16 @@ jobs:
     - name: Publish with dotnet
       run: dotnet publish -c Release -o out
 
-    - name: Build Docker image
-      run: docker build -t sep4-user-service .
+    - name: Log in to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_USERNAME }}/sep4-user-service:latest
