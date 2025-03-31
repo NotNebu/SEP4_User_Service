@@ -40,4 +40,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/sep4-user-service:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
