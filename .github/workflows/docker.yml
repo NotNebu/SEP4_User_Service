@@ -1,4 +1,4 @@
-name: Build and Push gRPC User Microservice
+name: Build gRPC User Microservice
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,22 +19,14 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Restore dependencies
+      run: dotnet restore
+
     - name: Build with dotnet
       run: dotnet build --configuration Release
 
     - name: Publish with dotnet
       run: dotnet publish -c Release -o out
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/usermicroservice:latest
+    - name: Build Docker image
+      run: docker build -t sep4-user-service .
