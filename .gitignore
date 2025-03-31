@@ -1,0 +1,33 @@
+# Build artifacts
+bin/
+obj/
+out/
+
+# Rider / VS Code / VS
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# Docker
+*.tar
+*.pid
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dotnet
+*.vs/
+*.dbmdl
+*.pdb
+
+# Nuget stuff
+packages/
+*.nupkg
