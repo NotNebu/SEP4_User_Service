@@ -1,12 +1,16 @@
 using SEP4_User_Service.Services;
 
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenLocalhost(5001, listenOptions =>
+    // Sørg for at lytte på port 5001 på *alle* IP'er
+    options.ListenAnyIP(5001, listenOptions =>
     {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+        // Kør KUN HttpProtocols.Http2 for at tvinge ren h2c
+        listenOptions.Protocols = HttpProtocols.Http2;
     });
 });
 
