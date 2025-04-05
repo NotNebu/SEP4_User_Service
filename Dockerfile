@@ -5,7 +5,8 @@ WORKDIR /src
 COPY ["SEP4_User_Service.csproj", "./"]
 RUN dotnet restore "SEP4_User_Service.csproj"
 
-COPY . .
+COPY . . 
+RUN dotnet restore "SEP4_User_Service.csproj"
 RUN dotnet publish "SEP4_User_Service.csproj" -c Release -o /app/publish
 
 # Runtime stage

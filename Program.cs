@@ -1,5 +1,9 @@
-using SEP4_User_Service.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Application.Interfaces;
+using Infrastructure.Security;
+using Infrastructure.Repositories;
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +21,19 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddGrpc();
 builder.Services.AddControllers();
 
+// Registrer interfaces
+builder.Services.AddScoped<IAuthService, AuthUserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+// Database context
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseInMemoryDatabase("UserDb")); 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
+app.MapGrpcService<AuthGrpcService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
 app.MapControllers();
 
