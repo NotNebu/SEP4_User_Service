@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Application.Interfaces;
-using Infrastructure.Security;
-using Infrastructure.Repositories;
 using Infrastructure.Persistence;
+using Infrastructure.Repositories;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,11 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options =>
 {
     // Sørg for at lytte på port 5001 på *alle* IP'er
-    options.ListenAnyIP(5001, listenOptions =>
-    {
-        // Kør KUN HttpProtocols.Http2 for at tvinge ren h2c
-        listenOptions.Protocols = HttpProtocols.Http2;
-    });
+    options.ListenAnyIP(
+        5001,
+        listenOptions =>
+        {
+            // Kør KUN HttpProtocols.Http2 for at tvinge ren h2c
+            listenOptions.Protocols = HttpProtocols.Http2;
+        }
+    );
 });
 
 // Add services to the container.
@@ -27,8 +30,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 // Database context
-builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseInMemoryDatabase("UserDb")); 
+builder.Services.AddDbContext<UserDbContext>(options => options.UseInMemoryDatabase("UserDb"));
 
 var app = builder.Build();
 

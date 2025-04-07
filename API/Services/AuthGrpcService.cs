@@ -1,6 +1,6 @@
+using Application.Interfaces;
 using Grpc.Core;
 using UserService.Grpc;
-using Application.Interfaces;
 
 public class AuthGrpcService : UserService.Grpc.AuthService.AuthServiceBase
 {
@@ -17,9 +17,16 @@ public class AuthGrpcService : UserService.Grpc.AuthService.AuthServiceBase
         return new LoginResponse { Token = token };
     }
 
-    public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
+    public override async Task<RegisterResponse> Register(
+        RegisterRequest request,
+        ServerCallContext context
+    )
     {
-        var success = await _authService.RegisterAsync(request.Email, request.Password, request.Username);
+        var success = await _authService.RegisterAsync(
+            request.Email,
+            request.Password,
+            request.Username
+        );
         return new RegisterResponse { Success = success };
     }
 

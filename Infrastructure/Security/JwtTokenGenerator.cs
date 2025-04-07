@@ -1,11 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
-using Application.Interfaces;
-
+using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
 
@@ -24,7 +23,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var claims = new[]
         {
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim("UserId", user.Id.ToString())
+            new Claim("UserId", user.Id.ToString()),
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -34,7 +33,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             SigningCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature
-            )
+            ),
         };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -48,14 +47,18 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_config["Jwt:Secret"]);
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(key),
-                ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+            tokenHandler.ValidateToken(
+                token,
+                new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ClockSkew = TimeSpan.Zero,
+                },
+                out SecurityToken validatedToken
+            );
 
             var jwtToken = (JwtSecurityToken)validatedToken;
             var email = jwtToken.Claims.First(x => x.Type == ClaimTypes.Email).Value;
