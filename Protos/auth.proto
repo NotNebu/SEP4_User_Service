@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+// Angiver C# namespace for den genererede kode
+option csharp_namespace = "UserService.Grpc";
+
+// gRPC-tjeneste til autentificering
+service AuthService {
+  // Logger en bruger ind og returnerer et JWT-token
+  rpc Login (LoginRequest) returns (LoginResponse);
+
+  // Registrerer en ny bruger og returnerer om det lykkedes
+  rpc Register (RegisterRequest) returns (RegisterResponse);
+
+  // Henter brugerinformation baseret på et JWT-token
+  rpc GetUser (UserRequest) returns (UserResponse);
+}
+
+// Anmodning om login med email og adgangskode
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+// Svar ved login med JWT-token
+message LoginResponse {
+  string token = 1;
+}
+
+// Anmodning om at registrere en ny bruger
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string username = 3;
+}
+
+// Svar ved registrering, angiver om det lykkedes
+message RegisterResponse {
+  bool success = 1;
+}
+
+// Anmodning om brugerdata via token
+message UserRequest {
+  string token = 1;
+}
+
+// Svar med brugerens email og brugernavn
+message UserResponse {
+  string email = 1;
+  string username = 2;
+}

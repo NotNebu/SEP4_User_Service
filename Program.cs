@@ -1,24 +1,59 @@
-using SEP4_User_Service.Services;
+using Application.Interfaces;
+using Infrastructure.Persistence;
+using Infrastructure.Repositories;
+using Infrastructure.Security;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+builder.Configuration["Jwt:Secret"] = jwtSecret;
+
+// Konfigurer Kestrel til kun at bruge HTTP/2 (krævet for gRPC uden TLS - h2c)
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenLocalhost(5001, listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
-    });
+    // Lyt på port 5001 på alle IP-adresser
+    options.ListenAnyIP(
+        5001,
+        listenOptions =>
+        {
+            // Brug kun HTTP/2 (uden HTTP/1.1 fallback)
+            listenOptions.Protocols = HttpProtocols.Http2;
+        }
+    );
 });
 
-// Add services to the container.
+// Tilføj gRPC og MVC/Controller-support til DI-containeren
 builder.Services.AddGrpc();
 builder.Services.AddControllers();
 
+// Registrér afhængigheder til services og repositories i DI-containeren
+builder.Services.AddScoped<IAuthService, AuthUserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+// Konfigurer Entity Framework Core til at bruge en in-memory database
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client.");
+// Konfigurer HTTP-pipelinen
+
+// Map gRPC-tjenesten til AuthService
+app.MapGrpcService<AuthGrpcService>();
+
+// Basis GET-endpoint som informerer om gRPC-brug
+app.MapGet("/", () =>
+    "Communication with gRPC endpoints must be made through a gRPC client.");
+
+// Map eventuelle API-kontrollere (hvis nødvendigt)
 app.MapControllers();
 
+// Start applikationen
 app.Run();
