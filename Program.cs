@@ -7,6 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+builder.Configuration["Jwt:Secret"] = jwtSecret;
+
 // Konfigurer Kestrel til kun at bruge HTTP/2 (krævet for gRPC uden TLS - h2c)
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -31,8 +36,10 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 // Konfigurer Entity Framework Core til at bruge en in-memory database
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseInMemoryDatabase("UserDb"));
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 

@@ -3,13 +3,17 @@ bin/
 obj/
 out/
 
-# Rider / VS Code / VS
+# User secrets
+secrets.json
+
+# Rider / VS Code / Visual Studio
 .vscode/
 .idea/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
+*.vs/
 
 # Logs
 *.log
@@ -18,16 +22,33 @@ out/
 *.tar
 *.pid
 docker-compose.override.yml
+docker-compose.*.yml
+.env         
 
-# OS
+# OS generelle
 .DS_Store
 Thumbs.db
 
-# Dotnet
-*.vs/
-*.dbmdl
-*.pdb
+# EF Core migrations cache
+Migrations/     
 
-# Nuget stuff
+# NuGet
 packages/
 *.nupkg
+*.snupkg
+
+# Database artifacts
+*.db
+*.dbmdl
+
+# Debugging
+*.pdb
+
+# Test result artifacts
+TestResults/
+coverage/
+*.trx
+*.coverage
+
+# GitHub Actions
+.github/workflows/*.log
