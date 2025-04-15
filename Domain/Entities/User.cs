@@ -1,27 +1,29 @@
-namespace Domain.Entities;
+namespace SEP4_User_Service.Domain.Entities;
 
-/// <summary>
-/// Repræsenterer en bruger i systemet, herunder identitet og legitimationsoplysninger.
-/// </summary>
 public class User
 {
-    /// <summary>
-    /// Unik identifikator for brugeren.
-    /// </summary>
     public Guid Id { get; set; }
+    public String Username { get; set; } = String.Empty;
+    public String Password { get; set; } = String.Empty;
+    public String Email { get; set; } = String.Empty;
+    public String Firstname { get; set; } = String.Empty;
+    public string Lastname { get; set; } = String.Empty;
+    public string Birthday { get; set; } = string.Empty;
+    public ICollection<Location> Locations { get; set; } = new List<Location>();
 
-    /// <summary>
-    /// Brugerens emailadresse, som også anvendes til login.
-    /// </summary>
-    public string Email { get; set; } = null!;
+    public User(string username, string password, string email, string firstname, string lastname, string birthday, ICollection<Location>? locations = null)
+    {
+        Id = Guid.NewGuid();
+        Username = username;
+        Password = password;
+        Email = email;
+        Firstname = firstname;
+        Lastname = lastname;
+        Birthday = birthday;
+        Locations = locations ?? new List<Location>();
+    }
 
-    /// <summary>
-    /// Brugerens synlige brugernavn.
-    /// </summary>
-    public string Username { get; set; } = null!;
+    public User(){
 
-    /// <summary>
-    /// Brugerens adgangskode i hashed form (ikke rå tekst).
-    /// </summary>
-    public string Password { get; set; } = null!;
+    }
 }
