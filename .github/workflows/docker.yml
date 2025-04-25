@@ -33,13 +33,13 @@ jobs:
           ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore SEP4_User_Service.csproj
 
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build SEP4_User_Service.csproj --configuration Release --no-restore
 
     - name: Publish with dotnet
-      run: dotnet publish -c Release -o out
+      run: dotnet publish SEP4_User_Service.csproj -c Release -o out --no-restore
       
     # Logger ind på Docker Hub med secrets
     - name: Log in to DockerHub
