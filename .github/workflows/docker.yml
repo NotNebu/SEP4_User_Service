@@ -2,9 +2,13 @@ name: Build and Push gRPC User Microservice
 
 on:
   push:
-    branches: [ main ]
+    branches:
+    - main
+    - Dev
   pull_request:
-    branches: [ main ]
+    branches: 
+    - main
+    - Dev
 
 jobs:
   build-and-push:
