@@ -6,7 +6,7 @@ using Protos.Grpc;
 
 namespace SEP4_User_Service.API.Services;
 
-public class GrpcUserService : UserService.UserServiceBase
+public class GrpcUserService : Protos.Grpc.UserService.UserServiceBase
 {
     private readonly CreateUserUseCase _createUser;
     private readonly GetUserUseCase _getUser;

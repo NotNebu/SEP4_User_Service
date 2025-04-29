@@ -1,13 +1,11 @@
 using SEP4_User_Service.API.Services;
 using Microsoft.EntityFrameworkCore;
-using SEP4_User_Service.Infrastructure.Persistence.Data;
 using SEP4_User_Service.Infrastructure.Persistence.Repositories;
 using SEP4_User_Service.Application.Interfaces;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using SEP4_User_Service.Application.UseCases;
 using Application.Interfaces;
-using Infrastructure.Persistence;
-using Infrastructure.Repositories;
+using SEP4_User_Service.Infrastructure.Persistence;
 using Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);

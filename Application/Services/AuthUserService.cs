@@ -1,6 +1,7 @@
 using System;
+using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
 using Application.Interfaces;
-using Domain.Entities;
 
 /// <summary>
 /// Implementering af autentificeringstjenesten, som håndterer login, registrering og validering af brugere.
@@ -32,7 +33,7 @@ public class AuthUserService : IAuthService
     {
         Console.WriteLine($"Login attempt for: {email}");
 
-        var user = await _userRepository.GetByEmailAsync(email);
+        var user = await _userRepository.GetUserByEmailAsync(email);
 
         if (user == null)
         {
@@ -68,8 +69,10 @@ public class AuthUserService : IAuthService
     /// <returns>True hvis registreringen lykkes; ellers false hvis brugeren allerede findes.</returns>
     public async Task<bool> RegisterAsync(string email, string password, string username)
     {
-        if (await _userRepository.ExistsByEmailAsync(email))
-            return false;
+        
+if (await _userRepository.GetUserByEmailAsync(email) != null)
+    return false;
+
 
         var user = new User
         {
@@ -79,7 +82,7 @@ public class AuthUserService : IAuthService
             Password = BCrypt.Net.BCrypt.HashPassword(password),
         };
 
-        await _userRepository.AddAsync(user);
+        await _userRepository.CreateUserAsync(user);
         return true;
     }
 
@@ -92,4 +95,5 @@ public class AuthUserService : IAuthService
     {
         return _tokenGenerator.ValidateToken(token);
     }
+    
 }

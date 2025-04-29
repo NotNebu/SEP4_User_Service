@@ -1,6 +1,6 @@
 using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.Application.Interfaces;
-using SEP4_User_Service.Infrastructure.Persistence.Data;
+using SEP4_User_Service.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace SEP4_User_Service.Infrastructure.Persistence.Repositories;
