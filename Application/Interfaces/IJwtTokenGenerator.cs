@@ -1,4 +1,4 @@
-using Domain.Entities;
+using SEP4_User_Service.Domain.Entities;
 
 namespace Application.Interfaces;
 

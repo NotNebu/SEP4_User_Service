@@ -1,4 +1,4 @@
-using Domain.Entities;
+using SEP4_User_Service.Domain.Entities;
 
 /// <summary>
 /// Interface for autentificeringstjenester, herunder login, registrering og hentning af brugerdata.
