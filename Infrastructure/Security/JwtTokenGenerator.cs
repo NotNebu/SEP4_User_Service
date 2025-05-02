@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
 
-// Implementering af en service til generering og validering af JWT-tokens
+// Implementering af service til generering og validering af JWT-tokens
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _config;
