@@ -3,6 +3,7 @@ syntax = "proto3";
 option csharp_namespace = "Protos.Grpc";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 package user;
 
@@ -29,14 +30,17 @@ message GetUserByIdRequest {
 
 message UpdateUserRequest {
   string id = 1;
-  string username = 2;
-  string password = 3;
-  string email = 4;
-  string firstname = 5;
-  string lastname = 6;
-  string birthday = 7;
+
+  google.protobuf.StringValue username = 2;
+  google.protobuf.StringValue password = 3;
+  google.protobuf.StringValue email = 4;
+  google.protobuf.StringValue firstname = 5;
+  google.protobuf.StringValue lastname = 6;
+  google.protobuf.StringValue birthday = 7;
+
   repeated LocationMessage locations = 8;
 }
+
 
 message DeleteUserRequest {
   string id = 1;
@@ -60,10 +64,22 @@ message DeleteUserResponse {
   bool success = 1;
 }
 
+message ChangePasswordRequest {
+  string userId = 1;
+  string oldPassword = 2;
+  string newPassword = 3;
+}
+
+message ChangePasswordResponse {
+  bool success = 1;
+  string message = 2;
+}
+
 service UserService {
   rpc CreateUser (CreateUserRequest) returns (UserResponse);
   rpc GetUserById (GetUserByIdRequest) returns (UserResponse);
   rpc GetAllUsers (google.protobuf.Empty) returns (UserListResponse);
   rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);
   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
 }

@@ -150,4 +150,40 @@ public class GrpcUserService : Protos.Grpc.UserService.UserServiceBase
         Country = location.Country
     };
 }
+
+public override async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request, ServerCallContext context)
+{
+    var userId = Guid.Parse(request.UserId);
+    var user = await _getUser.ExecuteByIdAsync(userId);
+
+    if (user == null)
+    {
+        return new ChangePasswordResponse
+        {
+            Success = false,
+            Message = "Bruger ikke fundet."
+        };
+    }
+
+    bool valid = BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password);
+
+    if (!valid)
+    {
+        return new ChangePasswordResponse
+        {
+            Success = false,
+            Message = "Gammelt kodeord er forkert."
+        };
+    }
+
+    user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+    await _updateUser.ExecuteAsync(user);
+
+    return new ChangePasswordResponse
+    {
+        Success = true,
+        Message = "Kodeord ændret."
+    };
+}
+
 }

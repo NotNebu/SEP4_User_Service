@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Application.Interfaces;
+using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +31,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     /// <returns>Et signeret JWT-token som streng.</returns>
     public string GenerateToken(User user)
     {
-        var key = Encoding.ASCII.GetBytes(_config["Jwt:Secret"]);
+        var key = Encoding.UTF8.GetBytes(_config["Jwt:Secret"]);
         var claims = new[]
         {
             new Claim(ClaimTypes.Email, user.Email),
