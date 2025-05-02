@@ -8,27 +8,18 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Security;
 
-/// <summary>
-/// Implementering af <see cref="IJwtTokenGenerator"/> til generering og validering af JWT-tokens.
-/// </summary>
+// Implementering af en service til generering og validering af JWT-tokens
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _config;
 
-    /// <summary>
-    /// Initialiserer en ny instans af <see cref="JwtTokenGenerator"/> med konfigurationen.
-    /// </summary>
-    /// <param name="config">Konfigurationsobjekt, typisk med adgang til JWT-secret.</param>
+    // Initialiserer JwtTokenGenerator med konfiguration
     public JwtTokenGenerator(IConfiguration config)
     {
         _config = config;
     }
 
-    /// <summary>
-    /// Genererer et JWT-token baseret på en bruger.
-    /// </summary>
-    /// <param name="user">Brugeren som tokenet skal oprettes for.</param>
-    /// <returns>Et signeret JWT-token som streng.</returns>
+    // Genererer et JWT-token for en bruger
     public string GenerateToken(User user)
     {
         var key = Encoding.UTF8.GetBytes(_config["Jwt:Secret"]);
@@ -53,11 +44,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         return tokenHandler.WriteToken(token);
     }
 
-    /// <summary>
-    /// Validerer et JWT-token og returnerer den tilknyttede bruger, hvis gyldig.
-    /// </summary>
-    /// <param name="token">JWT-token der skal valideres.</param>
-    /// <returns>Et <see cref="User"/>-objekt hvis tokenet er gyldigt; ellers null.</returns>
+    // Validerer et JWT-token og returnerer den tilknyttede bruger
     public User? ValidateToken(string token)
     {
         try

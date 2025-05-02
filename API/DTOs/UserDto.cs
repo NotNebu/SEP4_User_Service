@@ -1,19 +1,9 @@
 namespace SEP4_User_Service.API.DTOs;
 
-    /// <summary>
-    /// Data Transfer Object (DTO), der repræsenterer en bruger returneret fra autentificeringsservicen.
-    /// Indeholder ikke følsomme oplysninger som adgangskode.
-    /// </summary>
-    public class UserDto
-    {
-        /// <summary>
-        /// Brugerens emailadresse.
-        /// </summary>
-        public string Email { get; set; } = default!;
-
-        /// <summary>
-        /// Brugerens brugernavn.
-        /// </summary>
-        public string Username { get; set; } = default!;
-    }
+// DTO til at repræsentere en bruger uden følsomme oplysninger
+public class UserDto
+{
+    public string Email { get; set; } = default!; // Brugerens emailadresse
+    public string Username { get; set; } = default!; // Brugerens brugernavn
+}
 
