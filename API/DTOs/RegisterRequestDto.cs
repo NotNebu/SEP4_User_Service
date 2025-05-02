@@ -1,20 +1,20 @@
-namespace SEP4_User_Service.API.DTOs;
+using System.ComponentModel.DataAnnotations;
 
+namespace SEP4_User_Service.API.DTOs
+{
+    // DTO til at håndtere registreringsanmodninger
     public class RegisterRequestDto
     {
-        /// <summary>
-        /// Brugerens emailadresse.
-        /// </summary>
+        [Required(ErrorMessage = "Email er nødvendig.")]
+        [EmailAddress(ErrorMessage = "Forkert email format.")]
         public string Email { get; set; } = default!;
 
-        /// <summary>
-        /// Brugerens adgangskode i klartekst (skal sendes over HTTPS).
-        /// </summary>
+        [Required(ErrorMessage = "Kodeord er nødvendig.")]
+        [MinLength(6, ErrorMessage = "Kodeord skal være mindst 6 karakterer lang.")]
         public string Password { get; set; } = default!;
 
-        /// <summary>
-        /// Brugerens ønskede brugernavn.
-        /// </summary>
+        [Required(ErrorMessage = "Brugernavn er nødvendig.")]
+        [MinLength(3, ErrorMessage = "Brugernavn skal være mindst 3 karakterer lang.")]
         public string Username { get; set; } = default!;
     }
-
+}
