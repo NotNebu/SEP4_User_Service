@@ -95,4 +95,3 @@ public class AuthController : ControllerBase
         return Ok(new { Message = "Logout successful" });
     }
 }
-

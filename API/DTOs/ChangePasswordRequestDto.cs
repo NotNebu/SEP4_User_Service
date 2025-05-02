@@ -1,4 +1,5 @@
 namespace SEP4_User_Service.API.DTOs;
+
 using System.ComponentModel.DataAnnotations;
 
 // DTO til at håndtere anmodninger om ændring af adgangskode

@@ -12,4 +12,4 @@ namespace SEP4_User_Service.API.DTOs
         [Required(ErrorMessage = "Password er nødvendig.")]
         public string Password { get; set; } = default!;
     }
-}
+
