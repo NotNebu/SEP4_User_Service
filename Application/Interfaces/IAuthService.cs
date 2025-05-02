@@ -1,5 +1,6 @@
 using SEP4_User_Service.Domain.Entities;
 
+namespace SEP4_User_Service.Application.Interfaces;
 /// <summary>
 /// Interface for autentificeringstjenester, herunder login, registrering og hentning af brugerdata.
 /// </summary>

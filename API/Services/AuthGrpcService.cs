@@ -1,4 +1,4 @@
-using Application.Interfaces;
+using SEP4_User_Service.Application.Interfaces;
 using Grpc.Core;
 using UserService.Grpc;
 

@@ -1,6 +1,6 @@
 using SEP4_User_Service.Domain.Entities;
 
-namespace Application.Interfaces;
+namespace SEP4_User_Service.Application.Interfaces;
 
 /// <summary>
 /// Interface til generering og validering af JWT-tokens for brugergodkendelse.
