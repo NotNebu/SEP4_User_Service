@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj": {}
+    "/home/ditte/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj": {}
   },
   "projects": {
-    "/home/alex/SEP4/SEP4_User_Service/User_Service/User_Service.csproj": {
+    "/home/ditte/SEP4_User_Service/User_Service/User_Service.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/alex/SEP4/SEP4_User_Service/User_Service/User_Service.csproj",
+        "projectUniqueName": "/home/ditte/SEP4_User_Service/User_Service/User_Service.csproj",
         "projectName": "User_Service",
-        "projectPath": "/home/alex/SEP4/SEP4_User_Service/User_Service/User_Service.csproj",
-        "packagesPath": "/home/alex/.nuget/packages/",
-        "outputPath": "/home/alex/SEP4/SEP4_User_Service/User_Service/obj/",
+        "projectPath": "/home/ditte/SEP4_User_Service/User_Service/User_Service.csproj",
+        "packagesPath": "/home/ditte/.nuget/packages/",
+        "outputPath": "/home/ditte/SEP4_User_Service/User_Service/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/alex/.nuget/NuGet/NuGet.Config"
+          "/home/ditte/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -105,17 +105,17 @@
         }
       }
     },
-    "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj": {
+    "/home/ditte/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj",
+        "projectUniqueName": "/home/ditte/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj",
         "projectName": "User_Service_Tests",
-        "projectPath": "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj",
-        "packagesPath": "/home/alex/.nuget/packages/",
-        "outputPath": "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/obj/",
+        "projectPath": "/home/ditte/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj",
+        "packagesPath": "/home/ditte/.nuget/packages/",
+        "outputPath": "/home/ditte/SEP4_User_Service/User_Service_Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/alex/.nuget/NuGet/NuGet.Config"
+          "/home/ditte/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -127,8 +127,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "/home/alex/SEP4/SEP4_User_Service/User_Service/User_Service.csproj": {
-                "projectPath": "/home/alex/SEP4/SEP4_User_Service/User_Service/User_Service.csproj"
+              "/home/ditte/SEP4_User_Service/User_Service/User_Service.csproj": {
+                "projectPath": "/home/ditte/SEP4_User_Service/User_Service/User_Service.csproj"
               }
             }
           }
@@ -143,9 +143,29 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Google.Protobuf": {
+              "target": "Package",
+              "version": "[3.30.2, )"
+            },
+            "Grpc.Net.Client": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Grpc.Net.Client.Web": {
+              "target": "Package",
+              "version": "[2.71.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
               "version": "[17.6.0, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.72, )"
             },
             "coverlet.collector": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",

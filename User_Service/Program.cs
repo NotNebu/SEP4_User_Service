@@ -9,6 +9,12 @@ using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Grpc.AspNetCore.Web;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 // Konfigurerer applikationen og dens services
 var builder = WebApplication.CreateBuilder(args);
@@ -18,13 +24,18 @@ builder.Configuration.AddEnvironmentVariables();
 
 // Henter JWT-secret fra miljøvariabler
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
+if (string.IsNullOrWhiteSpace(jwtSecret))
+{
+    jwtSecret = "InMemoryTestingSecretDontUseInProduction";
+}
 builder.Configuration["Jwt:Secret"] = jwtSecret;
 
-// Konfigurerer JWT-baseret autentifikation
+// Konfigurer JWT‐autentifikation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        var key = Encoding.UTF8.GetBytes(jwtSecret!);
+        // NU er jwtSecret altid en string, ikke null
+        var key = Encoding.UTF8.GetBytes(jwtSecret);
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,
@@ -49,7 +60,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 // Tilføjer gRPC og API-kontroller til DI-containeren
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(); 
 builder.Services.AddControllers();
 
 // Registrerer UseCases og services i DI-containeren
@@ -71,13 +82,19 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 // Bygger applikationen
 var app = builder.Build();
 
+// grpc-web middleware (DefaultEnabled = true betyder at alle services understøtter grpc-web uden at du behøver .EnableGrpcWeb() på hver enkelt)
+app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
+
 // Tilføjer middleware til autentifikation og autorisation
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 // Mapper gRPC-tjenester
-app.MapGrpcService<AuthGrpcService>();
-app.MapGrpcService<GrpcUserService>();
+app.MapGrpcService<AuthGrpcService>()
+   .EnableGrpcWeb();    // <-- gør Auth gRPC tilgængelig via grpc-web
+app.MapGrpcService<GrpcUserService>()
+   .EnableGrpcWeb();  
 
 // Tilføjer et basis GET-endpoint
 app.MapGet("/", () =>
@@ -86,12 +103,21 @@ app.MapGet("/", () =>
 // Mapper API-kontrollere
 app.MapControllers();
 
-// Migrerer databasen ved opstart
-using (var scope = app.Services.CreateScope())
+// Migrerer kun databasen, hvis vi IKKE kører i “Testing” environment
+if (!app.Environment.IsEnvironment("Testing"))
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
     db.Database.Migrate();
 }
 
+
 // Starter applikationen
 app.Run();
+
+
+// Til test: Stub-klasse så WebApplicationFactory<Program> kan finde entry-point
+namespace SEP4_User_Service.API
+{
+    public partial class Program { }
+}
