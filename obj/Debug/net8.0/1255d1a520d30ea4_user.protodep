@@ -1,4 +1,0 @@
-obj/Debug/net8.0/Protos/User.cs \
-obj/Debug/net8.0/Protos/UserGrpc.cs: /home/ditte/.nuget/packages/grpc.tools/2.57.0/build/native/include/google/protobuf/empty.proto\
- /home/ditte/.nuget/packages/grpc.tools/2.57.0/build/native/include/google/protobuf/wrappers.proto\
- Protos/user.proto
