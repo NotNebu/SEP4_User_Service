@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SEP4_User_Service.API.DTOs;
 using SEP4_User_Service.Application.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace SEP4_User_Service.API.Controllers;
 
-// Controller til autentificeringsrelaterede operationer
+// Denne controller håndterer autentificeringsrelaterede operationer som login, registrering og logout.
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -13,7 +16,7 @@ public class AuthController : ControllerBase
     private readonly IRegisterUseCase _registerUseCase;
     private readonly IGetUserByTokenUseCase _getUserByTokenUseCase;
 
-    // Initialiserer controlleren med nødvendige use cases
+    // Constructor til at injicere afhængigheder.
     public AuthController(
         ILoginUseCase loginUseCase,
         IRegisterUseCase registerUseCase,
@@ -24,7 +27,7 @@ public class AuthController : ControllerBase
         _getUserByTokenUseCase = getUserByTokenUseCase;
     }
 
-    // Endpoint til login
+    // Endpoint til login.
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
@@ -35,8 +38,8 @@ public class AuthController : ControllerBase
             Response.Cookies.Append("jwt", token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Strict,
+                Secure = true, // vigtigt for HTTPS
+                SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
 
@@ -48,7 +51,7 @@ public class AuthController : ControllerBase
         }
     }
 
-    // Endpoint til registrering
+    // Endpoint til registrering.
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
@@ -64,23 +67,25 @@ public class AuthController : ControllerBase
         return Ok(new { Success = true });
     }
 
-    // Endpoint til at hente brugeroplysninger
+    // Endpoint til at hente brugeroplysninger.
     [HttpGet("me")]
-    public async Task<IActionResult> GetUser()
+    [Authorize]
+    public IActionResult GetUser()
     {
-        var token = Request.Cookies["jwt"];
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+        var userId = User.FindFirst("UserId")?.Value;
 
-        if (string.IsNullOrWhiteSpace(token))
-            return Unauthorized("Token mangler.");
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(userId))
+            return Unauthorized("Claims mangler i token.");
 
-        var user = await _getUserByTokenUseCase.ExecuteAsync(token);
-        if (user == null)
-            return Unauthorized("Ugyldigt token.");
-
-        return Ok(new { user.Email, user.Username });
+        return Ok(new
+        {
+            Email = email,
+            UserId = userId
+        });
     }
 
-    // Endpoint til logout
+    // Endpoint til logout.
     [HttpPost("logout")]
     public IActionResult Logout()
     {

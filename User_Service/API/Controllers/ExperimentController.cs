@@ -5,6 +5,7 @@ using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.API.DTOs.Experiment;
 using SEP4_User_Service.Application.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -18,7 +19,6 @@ public class ExperimentController : ControllerBase
     private readonly DeleteExperimentUseCase _deleteUseCase;
     private readonly GetExperimentByIdUseCase _getByIdUseCase;
     private readonly IExperimentRepository _experimentRepository;
-    private readonly IUserRepository _userRepository;
 
     // Constructor til at injicere afhængigheder.
     public ExperimentController(

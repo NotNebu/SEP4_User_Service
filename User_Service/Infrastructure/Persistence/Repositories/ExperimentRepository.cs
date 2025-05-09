@@ -3,65 +3,58 @@ using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace SEP4_User_Service.Infrastructure.Persistence.Data
+// Denne klasse implementerer repositoryet for eksperimenter.
+// Den håndterer CRUD-operationer på eksperimentdata i databasen.
+public class ExperimentRepository : IExperimentRepository
 {
-    // Databasekontekst for brugere, lokationer og eksperimenter
-    public class UserDbContext : DbContext
+    private readonly UserDbContext _context;
+
+    // Constructor til at injicere databasekonteksten.
+    public ExperimentRepository(UserDbContext context)
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options)
-            : base(options)
-        {
-        }
+        _context = context;
+    }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<Experiment> Experiments { get; set; }
+    // Opretter et nyt eksperiment i databasen.
+    public async Task CreateAsync(Experiment experiment)
+    {
+        await _context.Experiments.AddAsync(experiment);
+        await _context.SaveChangesAsync();
+    }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+    // Opdaterer et eksisterende eksperiment i databasen.
+    public async Task UpdateAsync(Experiment experiment)
+    {
+        _context.Experiments.Update(experiment);
+        await _context.SaveChangesAsync();
+    }
 
-            // Konfiguration for User-entiteten
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(u => u.Id);
-                entity.Property(u => u.Id)
-                      .ValueGeneratedOnAdd();
+    // Sletter et eksperiment fra databasen baseret på dets ID.
+    // Returnerer en bool, der angiver, om sletningen lykkedes.
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var entity = await _context.Experiments.FindAsync(id);
+        if (entity == null)
+            return false;
 
-                // Auto-include af Locations relation, så den altid hentes med
-                entity.Navigation(u => u.Locations)
-                      .AutoInclude();
+        _context.Experiments.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
-                // (Valgfrit) Auto-include eksperimenter
-                // entity.Navigation(u => u.Experiments)
-                //       .AutoInclude();
-            });
+    // Henter et eksperiment fra databasen baseret på dets ID.
+    // Returnerer eksperimentet, hvis det findes, ellers null.
+    public async Task<Experiment?> GetByIdAsync(int id)
+    {
+        return await _context.Experiments.FindAsync(id);
+    }
 
-            // Konfiguration for Location-entiteten
-            modelBuilder.Entity<Location>(entity =>
-            {
-                entity.HasKey(l => l.LocationID);
-                entity.Property(l => l.LocationID)
-                      .ValueGeneratedOnAdd();
-
-                entity.HasOne(l => l.User)
-                      .WithMany(u => u.Locations)
-                      .HasForeignKey(l => l.UserID)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Konfiguration for Experiment-entiteten
-            modelBuilder.Entity<Experiment>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id)
-                      .ValueGeneratedOnAdd();
-
-                entity.HasOne(e => e.User)
-                      .WithMany(u => u.Experiments)
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-        }
+    // Henter alle eksperimenter for en given bruger baseret på brugerens ID.
+    // Returnerer en liste af eksperimenter.
+    public async Task<List<Experiment>> GetByUserIdAsync(Guid userId)
+    {
+        return await _context.Experiments
+            .Where(e => e.UserId == userId)
+            .ToListAsync();
     }
 }
