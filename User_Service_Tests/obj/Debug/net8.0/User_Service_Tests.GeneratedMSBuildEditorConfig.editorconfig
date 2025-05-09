@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = User_Service_Tests
-build_property.ProjectDir = /home/ditte/SEP4_User_Service/User_Service_Tests/
+build_property.ProjectDir = /home/alex/SEP4/SEP4_User_Service/User_Service_Tests/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
