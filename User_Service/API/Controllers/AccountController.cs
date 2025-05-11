@@ -1,24 +1,25 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SEP4_User_Service.Application.UseCases;
+using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.API.DTOs;
 using System.Security.Claims;
 using SEP4_User_Service.Application.Interfaces;
 
 namespace SEP4_User_Service.API.Controllers;
 
-// Angiver, at denne klasse er en API-controller og definerer dens routing.
+// Denne controller håndterer brugerrelaterede operationer som ændring af kodeord og profilopdatering.
 [ApiController]
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-    // Dependency Injection: Interface til håndtering af ændring af kodeord.
     private readonly IChangePasswordUseCase _changePasswordUseCase;
+    private readonly IUserRepository _userRepository;
 
     // Constructor til at injicere afhængigheder.
-    public AccountController(IChangePasswordUseCase changePasswordUseCase)
+    public AccountController(IChangePasswordUseCase changePasswordUseCase, IUserRepository userRepository)
     {
         _changePasswordUseCase = changePasswordUseCase;
+        _userRepository = userRepository;
     }
 
     // Endpoint til at ændre brugerens kodeord.
@@ -27,26 +28,93 @@ public class AccountController : ControllerBase
     [Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request)
     {
-        // Henter brugerens ID fra claims i den autoriserede bruger.
         var userId = User.FindFirst("UserId")?.Value;
-
-        // Hvis bruger-ID'et ikke findes, returneres en Unauthorized-respons.
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("Ugyldig bruger.");
 
-        // Kalder use case for at ændre kodeordet og sender nødvendige parametre.
         var success = await _changePasswordUseCase.ExecuteAsync(
-            Guid.Parse(userId), // Konverterer bruger-ID til en Guid.
-            request.OldPassword, // Det gamle kodeord.
-            request.NewPassword  // Det nye kodeord.
+            Guid.Parse(userId),
+            request.OldPassword,
+            request.NewPassword
         );
 
-        // Hvis ændringen ikke lykkes, returneres en BadRequest-respons med en fejlmeddelelse.
         if (!success)
             return BadRequest(new { message = "Gammelt kodeord er forkert eller bruger ikke fundet." });
 
-        // Hvis ændringen lykkes, returneres en OK-respons med en succesmeddelelse.
         return Ok(new { message = "Kodeord opdateret." });
+    }
+
+    // Endpoint til at hente brugerens profil.
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetProfile()
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var user = await _userRepository.GetUserByIdAsync(Guid.Parse(userId));
+        if (user == null)
+            return NotFound();
+
+        var location = user.Locations.FirstOrDefault();
+
+        return Ok(new UserProfileDto
+        {
+            Firstname = user.Firstname,
+            Lastname = user.Lastname,
+            Username = user.Username,
+            Email = user.Email,
+            Birthday = user.Birthday,
+            Country = location?.Country ?? "",
+            Street = location?.Street ?? "",
+            HouseNumber = location?.HouseNumber ?? "",
+            City = location?.City ?? ""
+        });
+    }
+
+    // Endpoint til at opdatere brugerens profil.
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UserProfileUpdateDto dto)
+    {
+        var userId = User.FindFirst("UserId")?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var user = await _userRepository.GetUserByIdAsync(Guid.Parse(userId));
+        if (user == null)
+            return NotFound();
+
+        user.Firstname = dto.Firstname;
+        user.Lastname = dto.Lastname;
+        user.Username = dto.Username;
+        user.Email = dto.Email;
+        user.Birthday = dto.Birthday;
+
+        var location = user.Locations.FirstOrDefault();
+        if (location == null)
+        {
+            location = new Location
+            {
+                Street = dto.Street,
+                HouseNumber = dto.HouseNumber,
+                City = dto.City,
+                Country = dto.Country,
+                UserID = user.Id
+            };
+            user.Locations.Add(location);
+        }
+        else
+        {
+            location.Street = dto.Street;
+            location.HouseNumber = dto.HouseNumber;
+            location.City = dto.City;
+            location.Country = dto.Country;
+        }
+
+        await _userRepository.UpdateUserAsync(user);
+        return Ok(new { message = "Profil opdateret." });
     }
 }
 
