@@ -42,20 +42,37 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
-            "Google.Protobuf": {
-              "target": "Package",
-              "version": "[3.25.1, )"
-            },
             "Grpc.AspNetCore": {
+              "target": "Package",
+              "version": "[2.47.0, )"
+            },
+            "Grpc.AspNetCore.Web": {
+              "target": "Package",
+              "version": "[2.47.0, )"
+            },
+            "Grpc.Net.Client": {
+              "target": "Package",
+              "version": "[2.57.0, )"
+            },
+            "Grpc.Net.Client.Web": {
               "target": "Package",
               "version": "[2.57.0, )"
             },
             "Grpc.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.57.0, )"
+              "version": "[2.47.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "Microsoft.AspNetCore.TestHost": {
               "target": "Package",
               "version": "[8.0.2, )"
             },
@@ -80,6 +97,15 @@
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[8.7.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
+            "xunit.runner.visualstudio": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.4.5, )"
             }
           },
           "imports": [
@@ -147,10 +173,6 @@
               "target": "Package",
               "version": "[3.30.2, )"
             },
-            "Grpc.Core.Testing": {
-              "target": "Package",
-              "version": "[2.46.6, )"
-            },
             "Grpc.Net.Client": {
               "target": "Package",
               "version": "[2.71.0, )"
@@ -161,7 +183,7 @@
             },
             "Microsoft.EntityFrameworkCore.InMemory": {
               "target": "Package",
-              "version": "[9.0.3, )"
+              "version": "[9.0.4, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",

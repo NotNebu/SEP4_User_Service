@@ -5,6 +5,7 @@ using SEP4_User_Service.Application.Interfaces;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using SEP4_User_Service.Application.UseCases;
 using SEP4_User_Service.Infrastructure.Persistence.Data;
+using SEP4_User_Service.API.ExceptionMiddleware;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -106,6 +107,9 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 
 // Bygger applikationen.
 var app = builder.Build();
+
+// Tilføjer middelware til Errorhandling af controllers
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Tilføjer middleware til autentifikation og autorisation.
 app.UseAuthentication();
