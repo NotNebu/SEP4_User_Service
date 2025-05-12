@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "IufO6Yv/2HtqIo8I87eNB/94kMEzODPEu5IXDx4QRarh39ll23eEz0RAJBNsOyvynOwXdKQ0SrUadIPO64MWrw==",
+  "dgSpecHash": "pV15esLtZuzXqA0ynoSReuB2DzmqxIApc9GE4G6YlG1HHOjVDT53vbkB2/zgBuwlnMCBNRnsL93PHq2LoavYPQ==",
   "success": true,
   "projectFilePath": "/home/alex/SEP4/SEP4_User_Service/User_Service_Tests/User_Service_Tests.csproj",
   "expectedPackageFiles": [
+    "/home/alex/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/alex/.nuget/packages/castle.core/5.1.1/castle.core.5.1.1.nupkg.sha512",
     "/home/alex/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
     "/home/alex/.nuget/packages/google.protobuf/3.30.2/google.protobuf.3.30.2.nupkg.sha512",
