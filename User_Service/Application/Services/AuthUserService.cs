@@ -1,6 +1,7 @@
 using System;
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
+using BCrypt.Net; 
 
 /// <summary>
 /// Implementering af autentificeringstjenesten, som håndterer login, registrering og validering af brugere.

@@ -9,18 +9,24 @@ using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Grpc.AspNetCore.Web;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
-// Konfigurerer applikationen og dens services
+// Denne fil konfigurerer og starter applikationen.
 var builder = WebApplication.CreateBuilder(args);
 
-// Tilføjer miljøvariabler til konfiguration
+// Tilføjer miljøvariabler til konfiguration.
 builder.Configuration.AddEnvironmentVariables();
 
-// Henter JWT-secret fra miljøvariabler
+// Henter JWT-secret fra miljøvariabler og konfigurerer JWT-baseret autentifikation.
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 builder.Configuration["Jwt:Secret"] = jwtSecret;
 
-// Konfigurerer JWT-baseret autentifikation
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -34,64 +40,95 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ClockSkew = TimeSpan.Zero
         };
+
+        // Fejllogning ved validering.
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Token kunne ikke valideres:");
+                Console.WriteLine(context.Exception.ToString());
+                return Task.CompletedTask;
+            },
+            OnMessageReceived = context =>
+            {
+                var cookieToken = context.Request.Cookies["jwt"];
+                if (!string.IsNullOrEmpty(cookieToken))
+                {
+                    Console.WriteLine("Token fundet i cookie: " + cookieToken.Substring(0, 20) + "...");
+                    context.Token = cookieToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
-// Tilføjer autorisation
+// Tilføjer autorisation.
 builder.Services.AddAuthorization();
 
-// Konfigurerer Kestrel til at lytte på port 5001 og understøtte HTTP/2
+// Konfigurerer Kestrel til at lytte på port 5001 og understøtte HTTPS og HTTP/2.
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5001, listenOptions =>
     {
+        listenOptions.UseHttps("/certs/localhost-user-service.p12", "changeit");
         listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
     });
 });
 
-// Tilføjer gRPC og API-kontroller til DI-containeren
+// Tilføjer gRPC og API-kontroller til DI-containeren.
 builder.Services.AddGrpc();
 builder.Services.AddControllers();
 
-// Registrerer UseCases og services i DI-containeren
+// Registrerer UseCases og services i DI-containeren.
 builder.Services.AddScoped<CreateUserUseCase>();
 builder.Services.AddScoped<GetUserUseCase>();
 builder.Services.AddScoped<GetAllUsersUseCase>();
 builder.Services.AddScoped<UpdateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
+builder.Services.AddScoped<CreateExperimentUseCase>();
+builder.Services.AddScoped<UpdateExperimentUseCase>();
+builder.Services.AddScoped<DeleteExperimentUseCase>();
+builder.Services.AddScoped<GetExperimentByIdUseCase>();
+builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
+builder.Services.AddScoped<IGetUserByTokenUseCase, GetUserByTokenUseCase>();
+builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
 builder.Services.AddScoped<IAuthService, AuthUserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
+builder.Services.AddScoped<IExperimentRepository, ExperimentRepository>();
 
-// Konfigurerer Entity Framework Core til at bruge PostgreSQL
+// Konfigurerer Entity Framework Core til at bruge PostgreSQL.
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Bygger applikationen
+// Bygger applikationen.
 var app = builder.Build();
 
-// Tilføjer middleware til autentifikation og autorisation
+// Tilføjer middleware til autentifikation og autorisation.
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapper gRPC-tjenester
+// Mapper gRPC-tjenester og API-kontrollere.
 app.MapGrpcService<AuthGrpcService>();
 app.MapGrpcService<GrpcUserService>();
-
-// Tilføjer et basis GET-endpoint
-app.MapGet("/", () =>
-    "Communication with gRPC endpoints must be made through a gRPC client.");
-
-// Mapper API-kontrollere
+app.MapGrpcService<GrpcExperimentService>();
 app.MapControllers();
 
-// Migrerer databasen ved opstart
+// Migrerer databasen ved opstart.
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
     db.Database.Migrate();
 }
 
-// Starter applikationen
+// Starter applikationen.
 app.Run();
+
+// Til test: Stub-klasse så WebApplicationFactory<Program> kan finde entry-point
+namespace SEP4_User_Service.API
+{
+    public partial class Program { }
+}
