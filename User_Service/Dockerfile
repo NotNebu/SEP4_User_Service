@@ -17,4 +17,5 @@ COPY ./certs/localhost-user-service.p12 /certs/localhost-user-service.p12
 
 # Kør med HTTPS på port 5001
 EXPOSE 5001
+
 ENTRYPOINT ["dotnet", "User_Service.dll"]
