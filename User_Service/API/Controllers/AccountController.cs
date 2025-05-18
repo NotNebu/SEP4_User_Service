@@ -116,5 +116,41 @@ public class AccountController : ControllerBase
         await _userRepository.UpdateUserAsync(user);
         return Ok(new { message = "Profil opdateret." });
     }
+
+   [HttpPost("upload-profile-image")]
+[Authorize]
+public async Task<IActionResult> UploadProfileImage([FromForm] ProfileImageUploadDto dto)
+{
+    var userId = User.FindFirst("UserId")?.Value;
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var file = dto.File;
+
+    if (file == null || file.Length == 0)
+        return BadRequest("Ingen fil modtaget.");
+
+    var user = await _userRepository.GetUserByIdAsync(Guid.Parse(userId));
+    if (user == null)
+        return NotFound("Bruger ikke fundet.");
+
+    // Gem billede i wwwroot/uploads
+    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+    Directory.CreateDirectory(uploadsFolder);
+
+    var filename = $"{Guid.NewGuid()}_{file.FileName}";
+    var filePath = Path.Combine(uploadsFolder, filename);
+
+    using (var stream = new FileStream(filePath, FileMode.Create))
+    {
+        await file.CopyToAsync(stream);
+    }
+
+    user.ProfileImageUrl = $"/uploads/{filename}";
+    await _userRepository.UpdateUserAsync(user);
+
+    return Ok(new { message = "Profilbillede uploadet." });
+}
+
 }
 

@@ -6,6 +6,7 @@ using SEP4_User_Service.API.DTOs.Experiment;
 using SEP4_User_Service.Application.Interfaces;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -48,7 +49,7 @@ public class ExperimentController : ControllerBase
         {
             Title = dto.Title,
             Description = dto.Description,
-            DataJson = dto.DataJson,
+            DataJson = JsonSerializer.Serialize(dto.DataJson),
             UserId = Guid.Parse(userId)
         };
 
@@ -113,7 +114,7 @@ public class ExperimentController : ControllerBase
 
         experiment.Title = dto.Title;
         experiment.Description = dto.Description;
-        experiment.DataJson = dto.DataJson;
+        experiment.DataJson = JsonSerializer.Serialize(dto.DataJson);
 
         await _updateUseCase.ExecuteAsync(experiment);
         return Ok(new { message = "Eksperiment opdateret." });

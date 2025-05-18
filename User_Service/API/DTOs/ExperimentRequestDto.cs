@@ -11,5 +11,5 @@ public class ExperimentRequestDto
     public string? Description { get; set; }
 
     // JSON-data relateret til eksperimentet (valgfri).
-    public string? DataJson { get; set; }
+    public object DataJson { get; set; }
 }
