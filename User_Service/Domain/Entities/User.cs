@@ -9,7 +9,7 @@ namespace SEP4_User_Service.Domain.Entities
         public string Firstname { get; set; } = string.Empty;
         public string Lastname { get; set; } = string.Empty;
         public string Birthday { get; set; } = string.Empty;
-
+        public string? ProfileImageUrl { get; set; }
         // Adresse‐relation
         public ICollection<Location> Locations { get; set; } = new List<Location>();
 

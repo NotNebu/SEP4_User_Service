@@ -12,7 +12,7 @@ public class ExperimentDto
     public string? Description { get; set; }
 
     // JSON-data relateret til eksperimentet (valgfri).
-    public string? DataJson { get; set; }
+    public object DataJson { get; set; }
 
     // Tidsstempel for, hvornår eksperimentet blev oprettet.
     public string CreatedAt { get; set; } = string.Empty;
