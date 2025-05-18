@@ -116,7 +116,6 @@ public class AccountController : ControllerBase
         await _userRepository.UpdateUserAsync(user);
         return Ok(new { message = "Profil opdateret." });
     }
-
    [HttpPost("upload-profile-image")]
 [Authorize]
 public async Task<IActionResult> UploadProfileImage([FromForm] ProfileImageUploadDto dto)
@@ -151,6 +150,5 @@ public async Task<IActionResult> UploadProfileImage([FromForm] ProfileImageUploa
 
     return Ok(new { message = "Profilbillede uploadet." });
 }
-
 }
 

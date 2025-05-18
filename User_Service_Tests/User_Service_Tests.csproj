@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
@@ -27,8 +26,15 @@
     </PackageReference>
   </ItemGroup>
 
+<ItemGroup>
+  <ProjectReference Include="..\User_Service\User_Service.csproj" />
+  <ProjectReference Include="..\User_Service.Domain\User_Service.Domain.csproj" />
+  <ProjectReference Include="..\User_Service.Application\User_Service.Application.csproj" />
+</ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\User_Service\User_Service.csproj" />
   </ItemGroup>
+
 
 </Project>
