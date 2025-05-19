@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option csharp_namespace = "Protos.Grpc";
+package prediction;
+
+message PredictionDataNumeric {
+  int32 soil_type = 1;
+  int32 sunlight_hours = 2;
+  int32 water_frequency = 3;
+  int32 fertilizer_type = 4;
+  int32 temperature = 5;
+  int32 humidity = 6;
+}
+
+message PredictionDataCategorical {
+  string Soil_Type = 1;
+  string Water_Frequency = 2;
+  string Fertilizer_Type = 3;
+  int32 Sunlight_Hours = 4;
+  int32 Temperature = 5;
+  int32 Humidity = 6;
+}
+
+message CreatePredictionRequest {
+  string user_id = 1;
+  string model_type = 2; // "logistic" or "rfc"
+  string model_file = 3;
+
+  // One of these will be used
+  PredictionDataNumeric data_numeric = 4;
+  PredictionDataCategorical data_categorical = 5;
+}
+
+message PredictionMessage {
+  string id = 1;
+  string user_id = 2;
+  string model_type = 3;
+  string model_file = 4;
+  string input_json = 5;
+  string timestamp = 6;
+}
+
+message GetPredictionsByUserRequest {
+  string user_id = 1;
+}
+
+message PredictionListResponse {
+  repeated PredictionMessage predictions = 1;
+}
+
+service PredictionService {
+  rpc CreatePrediction(CreatePredictionRequest) returns (PredictionMessage);
+  rpc GetPredictionsByUser(GetPredictionsByUserRequest) returns (PredictionListResponse);
+}

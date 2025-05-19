@@ -98,6 +98,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
 builder.Services.AddScoped<IExperimentRepository, ExperimentRepository>();
+builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
 
 // Konfigurerer Entity Framework Core til at bruge PostgreSQL.
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
@@ -115,6 +116,7 @@ app.UseAuthorization();
 app.MapGrpcService<AuthGrpcService>();
 app.MapGrpcService<GrpcUserService>();
 app.MapGrpcService<GrpcExperimentService>();
+app.MapGrpcService<GrpcPredictionService>();
 app.MapControllers();
 
 // Migrerer databasen ved opstart.

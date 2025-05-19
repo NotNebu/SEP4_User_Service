@@ -16,6 +16,7 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Experiment> Experiments { get; set; }
+        public DbSet<Prediction> Predictions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,6 +63,21 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Data
                       .HasForeignKey(e => e.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
+
+            // Konfiguration for Prediction-entiteten
+            modelBuilder.Entity<Prediction>(entity =>
+         {
+            entity.HasKey(p => p.Id);
+            entity.Property(p => p.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.HasOne(p => p.User)
+                .WithMany(u => u.Predictions)
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+             });
+
+
         }
     }
 }
