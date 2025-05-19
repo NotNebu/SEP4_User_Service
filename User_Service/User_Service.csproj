@@ -12,6 +12,7 @@
     <Protobuf Include="Protos/user.proto" GrpcServices="Both" />
     <Protobuf Include="Protos/auth.proto" GrpcServices="Both" />
     <Protobuf Include="Protos/experiment.proto" GrpcServices="Both" />
+    <Protobuf Include="Protos/prediction.proto" GrpcServices="Both" />
   </ItemGroup>
 
   <ItemGroup>

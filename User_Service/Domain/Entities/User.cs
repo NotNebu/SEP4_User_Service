@@ -16,6 +16,8 @@ namespace SEP4_User_Service.Domain.Entities
         // HER skal Experiment‐navigationen stå
         public ICollection<Experiment> Experiments { get; set; } = new List<Experiment>();
 
+        public ICollection<Prediction> Predictions { get; set; } = new List<Prediction>();
+
         public User(string username, string password, string email, string firstname, string lastname, string birthday, ICollection<Location>? locations = null)
         {
             Id = Guid.NewGuid();
