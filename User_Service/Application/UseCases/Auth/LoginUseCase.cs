@@ -15,8 +15,13 @@ public class LoginUseCase : ILoginUseCase
 
     // Udfører login-operationen.
     // Returnerer et JWT-token, hvis login lykkes.
-    public Task<string> ExecuteAsync(string email, string password)
-    {
-        return _authService.LoginAsync(email, password);
-    }
+  public async Task<string> ExecuteAsync(string email, string password)
+        {
+            var token = await _authService.LoginAsync(email, password);
+
+            if (string.IsNullOrEmpty(token))
+                throw new UnauthorizedAccessException("Ugyldige loginoplysninger.");
+
+            return token;
+        }
 }

@@ -16,8 +16,12 @@ public class GetExperimentByIdUseCase
     }
 
     // Denne metode henter et eksperiment asynkront og returnerer det, hvis det findes.
-    public async Task<Experiment?> ExecuteAsync(int id)
+    public async Task<Experiment> ExecuteAsync(int id)
     {
-        return await _repository.GetByIdAsync(id);
-    }
+   var experiment = await _repository.GetByIdAsync(id);
+            if (experiment == null)
+                throw new ExperimentNotFoundException($"Eksperiment med ID {id} blev ikke fundet.");
+
+            return experiment;
+        }
 }
