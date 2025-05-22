@@ -4,9 +4,13 @@ name: Build and Push gRPC User Microservice
 # Definerer, hvornår workflowet skal køre
 on:
   push: # Kører ved push til main branch
-    branches: [ main ]
+    branches: 
+    - main
+    - dev
   pull_request: # Kører ved pull requests til main branch
-    branches: [ main ]
+    branches: 
+    - main
+    - dev 
 
 jobs:
   build-and-push: # Jobnavn
@@ -21,7 +25,7 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x' # Bruger .NET version 8.0.x
+        dotnet-version: '8.0.x' 
 
     # Cacher NuGet-pakker for at reducere build-tid
     - name: Cache NuGet packages
