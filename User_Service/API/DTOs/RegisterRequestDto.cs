@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SEP4_User_Service.API.DTOs
 {
-    // DTO til at håndtere registreringsanmodninger
     public class RegisterRequestDto
     {
         [Required(ErrorMessage = "Email er nødvendig.")]
@@ -10,7 +9,7 @@ namespace SEP4_User_Service.API.DTOs
         public string Email { get; set; } = default!;
 
         [Required(ErrorMessage = "Kodeord er nødvendig.")]
-        [MinLength(6, ErrorMessage = "Kodeord skal være mindst 6 karakterer lang.")]
+        [PasswordStrength]
         public string Password { get; set; } = default!;
 
         [Required(ErrorMessage = "Brugernavn er nødvendig.")]
