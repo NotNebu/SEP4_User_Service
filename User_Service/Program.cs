@@ -41,13 +41,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
 
-        // Fejllogning ved validering.
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
-                Console.WriteLine("Token kunne ikke valideres:");
-                Console.WriteLine(context.Exception.ToString());
+                // Debug logs fjernet
                 return Task.CompletedTask;
             },
             OnMessageReceived = context =>
@@ -55,7 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var cookieToken = context.Request.Cookies["jwt"];
                 if (!string.IsNullOrEmpty(cookieToken))
                 {
-                    Console.WriteLine("Token fundet i cookie: " + cookieToken.Substring(0, 20) + "...");
+                    // Debug logs fjernet
                     context.Token = cookieToken;
                 }
                 return Task.CompletedTask;
@@ -63,7 +61,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Tilføjer autorisation.
 builder.Services.AddAuthorization();
 
 // Konfigurerer Kestrel til at lytte på port 5001 og understøtte HTTPS og HTTP/2.
