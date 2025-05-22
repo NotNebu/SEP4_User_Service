@@ -49,3 +49,6 @@ TestResults/
 coverage/
 *.trx
 *.coverage
+
+# GitHub Actions
+.github/workflows/*.log
