@@ -1,30 +1,44 @@
+using System;
 using SEP4_User_Service.Application.Interfaces;
-using SEP4_User_Service.Application.Exceptions;
+using SEP4_User_Service.Domain.Entities;
+using System.Threading.Tasks;
 
-namespace SEP4_User_Service.Application.UseCases;
-
-// Use case til at håndtere brugerregistrering.
-public class RegisterUseCase : IRegisterUseCase
+namespace SEP4_User_Service.Application.UseCases
 {
-    private readonly IAuthService _authService;
-
-    // Initialiserer use case med en autentificeringstjeneste.
-    public RegisterUseCase(IAuthService authService)
+    public class RegisterUseCase : IRegisterUseCase
     {
-        _authService = authService;
-    }
+        private readonly IUserRepository _userRepository;
 
-    // Registrerer en ny bruger med email, adgangskode og brugernavn.
-    // Kaster exception hvis brugeren allerede findes.
-public async Task<bool> ExecuteAsync(string email, string password, string username)
+        public RegisterUseCase(IUserRepository userRepository)
         {
-            var success = await _authService.RegisterAsync(email, password, username);
+            _userRepository = userRepository;
+        }
 
-            if (!success)
+        public async Task<bool> ExecuteAsync(string email, string password, string username)
+        {
+            Console.WriteLine($"Registreringsforsøg for: {email}");
+
+            var existingUser = await _userRepository.GetUserByEmailAsync(email);
+            if (existingUser != null)
             {
-                throw new UserAlreadyExistsException("Bruger med denne email findes allerede.");
+                Console.WriteLine("Bruger eksisterer allerede.");
+                return false;
             }
 
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = email,
+                Username = username,
+                Password = BCrypt.Net.BCrypt.HashPassword(password),
+            };
+
+            Console.WriteLine("Bruger oprettes...");
+            await _userRepository.CreateUserAsync(user);
+
+            Console.WriteLine("Bruger oprettet.");
             return true;
         }
     }
+}
+

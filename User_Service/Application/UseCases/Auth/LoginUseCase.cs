@@ -1,27 +1,49 @@
 using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
+using System;
 
-namespace SEP4_User_Service.Application.UseCases;
-
-// Use case til at håndtere login.
-public class LoginUseCase : ILoginUseCase
+namespace SEP4_User_Service.Application.UseCases
 {
-    private readonly IAuthService _authService;
-
-    // Initialiserer use case med en autentificeringstjeneste.
-    public LoginUseCase(IAuthService authService)
+    public class LoginUseCase : ILoginUseCase
     {
-        _authService = authService;
-    }
+        private readonly IUserRepository _userRepository;
+        private readonly IJwtTokenGenerator _tokenGenerator;
 
-    // Udfører login-operationen.
-    // Returnerer et JWT-token, hvis login lykkes.
-  public async Task<string> ExecuteAsync(string email, string password)
+        public LoginUseCase(IUserRepository userRepository, IJwtTokenGenerator tokenGenerator)
         {
-            var token = await _authService.LoginAsync(email, password);
+            _userRepository = userRepository;
+            _tokenGenerator = tokenGenerator;
+        }
 
-            if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedAccessException("Ugyldige loginoplysninger.");
+        public async Task<string> ExecuteAsync(string email, string password)
+        {
+            Console.WriteLine($"Login attempt for: {email}");
+
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
+            if (user == null)
+            {
+                Console.WriteLine("Bruger ikke fundet.");
+                throw new UnauthorizedAccessException("Ugyldige legitimationsoplysninger");
+            }
+
+            Console.WriteLine($"Bruger fundet: {user.Email}");
+
+            if (string.IsNullOrEmpty(user.Password))
+            {
+                Console.WriteLine("Brugerens password er null eller tomt!");
+            }
+
+            var passwordMatch = BCrypt.Net.BCrypt.Verify(password, user.Password);
+            Console.WriteLine($"Password match: {passwordMatch}");
+
+            if (!passwordMatch)
+                throw new UnauthorizedAccessException("Ugyldige legitimationsoplysninger");
+
+            var token = _tokenGenerator.GenerateToken(user);
+            Console.WriteLine("Token genereret");
 
             return token;
         }
+    }
 }
