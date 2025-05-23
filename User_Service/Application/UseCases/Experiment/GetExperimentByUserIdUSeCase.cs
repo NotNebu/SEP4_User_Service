@@ -1,6 +1,5 @@
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
-using SEP4_User_Service.Application.Exceptions;
 
 namespace SEP4_User_Service.Application.UseCases;
 

@@ -7,17 +7,12 @@ out/
 secrets.json
 
 # Rider / VS Code / Visual Studio
-# User secrets
-secrets.json
-
-# Rider / VS Code / Visual Studio
 .vscode/
 .idea/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
-*.vs/
 *.vs/
 
 # Logs
@@ -29,18 +24,11 @@ secrets.json
 docker-compose.override.yml
 docker-compose.*.yml
 .env         
-docker-compose.*.yml
-.env         
 
-# OS generelle
 # OS generelle
 .DS_Store
 Thumbs.db
 
-# EF Core migrations cache
-Migrations/     
-
-# NuGet
 # EF Core migrations cache
 Migrations/     
 
@@ -61,3 +49,6 @@ TestResults/
 coverage/
 *.trx
 *.coverage
+
+# GitHub Actions
+.github/workflows/*.log

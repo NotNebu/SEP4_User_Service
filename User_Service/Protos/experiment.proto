@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+option csharp_namespace = "Protos.Grpc.Experiment";
+
+import "google/protobuf/empty.proto";
+
+package experiment;
+
+message ExperimentMessage {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  string dataJson = 4;
+  string createdAt = 5;
+  string userId = 6;
+}
+
+message ExperimentListResponse {
+  repeated ExperimentMessage experiments = 1;
+}
+
+message GetExperimentsByUserIdRequest {
+  string userId = 1;
+}
+
+message GetExperimentByIdRequest {
+  int32 id = 1;
+}
+
+message CreateExperimentRequest {
+  string userId = 1;
+  string title = 2;
+  string description = 3;
+  string dataJson = 4;
+}
+
+message UpdateExperimentRequest {
+  int32 id = 1;
+  string title = 2;
+  string description = 3;
+  string dataJson = 4;
+}
+
+message DeleteExperimentRequest {
+  int32 id = 1;
+}
+
+message DeleteExperimentResponse {
+  bool success = 1;
+}
+
+service ExperimentService {
+  rpc GetByUserId (GetExperimentsByUserIdRequest) returns (ExperimentListResponse);
+  rpc GetById (GetExperimentByIdRequest) returns (ExperimentMessage);
+  rpc Create (CreateExperimentRequest) returns (ExperimentMessage);
+  rpc Update (UpdateExperimentRequest) returns (google.protobuf.Empty);
+  rpc Delete (DeleteExperimentRequest) returns (DeleteExperimentResponse);
+}
