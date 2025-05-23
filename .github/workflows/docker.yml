@@ -3,18 +3,18 @@ name: Build and Push gRPC User Microservice
 
 # Definerer, hvornår workflowet skal køre
 on:
-  push: # Kører ved push til main branch
+  push: 
     branches: 
     - main
     - dev
-  pull_request: # Kører ved pull requests til main branch
+  pull_request: 
     branches: 
     - main
     - dev 
 
 jobs:
   build-and-push: # Jobnavn
-    runs-on: ubuntu-latest # Kører på en Ubuntu-maskine
+    runs-on: ubuntu-latest 
 
     steps:
     # Tjekker koden ud fra repository
@@ -31,10 +31,10 @@ jobs:
     - name: Cache NuGet packages
       uses: actions/cache@v3
       with:
-        path: ~/.nuget/packages # Sti til NuGet-pakker
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }} # Nøgle baseret på OS og projektfiler
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
         restore-keys: |
-          ${{ runner.os }}-nuget- # Gendanner cache, hvis nøglen ikke findes
+          ${{ runner.os }}-nuget- 
 
     # Gendanner afhængigheder med dotnet
     - name: Restore dependencies
@@ -52,16 +52,16 @@ jobs:
     - name: Log in to DockerHub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }} # Docker Hub-brugernavn
-        password: ${{ secrets.DOCKERHUB_TOKEN }} # Docker Hub-token
+        username: ${{ secrets.DOCKERHUB_USERNAME }} 
+        password: ${{ secrets.DOCKERHUB_TOKEN }} 
 
     # Bygger og uploader Docker-billedet til Docker Hub
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: . # Kontekst for Docker-build
-        file: ./Dockerfile # Sti til Dockerfile
-        push: true # Skubber billedet til Docker Hub
-        tags: | # Tilføjer tags til Docker-billedet
-          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest # Seneste tag
-          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:${{ github.sha }} # Commit SHA som tag
+        context: .
+        file: ./Dockerfile 
+        push: true 
+        tags: 
+          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:${{ github.sha }}
