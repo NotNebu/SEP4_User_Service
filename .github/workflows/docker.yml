@@ -59,8 +59,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
-        file: ./Dockerfile 
+        context: ./User_Service
+        file: ./User_Service/Dockerfile 
         push: true 
         tags: 
           ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
