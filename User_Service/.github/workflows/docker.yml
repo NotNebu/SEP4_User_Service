@@ -1,0 +1,67 @@
+# Workflow-navn
+name: Build and Push gRPC User Microservice
+
+# Definerer, hvornår workflowet skal køre
+on:
+  push: 
+    branches: 
+    - main
+    - dev
+  pull_request: 
+    branches: 
+    - main
+    - dev 
+
+jobs:
+  build-and-push: # Jobnavn
+    runs-on: ubuntu-latest 
+
+    steps:
+    # Tjekker koden ud fra repository
+    - name: Check out repo
+      uses: actions/checkout@v3
+
+    # Sætter .NET op i workflowet
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' 
+
+    # Cacher NuGet-pakker for at reducere build-tid
+    - name: Cache NuGet packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget- 
+
+    # Gendanner afhængigheder med dotnet
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Bygger projektet med dotnet
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+
+    # Publicerer projektet til en output-mappe
+    - name: Publish with dotnet
+      run: dotnet publish -c Release -o out
+
+    # Logger ind på Docker Hub ved hjælp af secrets
+    - name: Log in to DockerHub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }} 
+        password: ${{ secrets.DOCKERHUB_TOKEN }} 
+
+    # Bygger og uploader Docker-billedet til Docker Hub
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile 
+        push: true 
+        tags: 
+          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:${{ github.sha }}
