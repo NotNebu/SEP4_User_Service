@@ -1,13 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using SEP4_User_Service.API.DTOs;
 using SEP4_User_Service.Application.Interfaces;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using SEP4_User_Service.Application.Exceptions; 
 
 namespace SEP4_User_Service.API.Controllers;
 
-// Denne controller håndterer autentificeringsrelaterede operationer som login, registrering og logout.
+// Controller til autentificeringsrelaterede operationer
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -16,7 +14,7 @@ public class AuthController : ControllerBase
     private readonly IRegisterUseCase _registerUseCase;
     private readonly IGetUserByTokenUseCase _getUserByTokenUseCase;
 
-    // Constructor til at injicere afhængigheder.
+    // Initialiserer controlleren med nødvendige use cases
     public AuthController(
         ILoginUseCase loginUseCase,
         IRegisterUseCase registerUseCase,
@@ -27,31 +25,24 @@ public class AuthController : ControllerBase
         _getUserByTokenUseCase = getUserByTokenUseCase;
     }
 
-    // Endpoint til login.
-    [HttpPost("login")]
+    // Endpoint til login
+        [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
     {
-        try
-        {
-            var token = await _loginUseCase.ExecuteAsync(request.Email, request.Password);
+        var token = await _loginUseCase.ExecuteAsync(request.Email, request.Password);
 
-            Response.Cookies.Append("jwt", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true, // vigtigt for HTTPS
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddHours(1)
-            });
-
-            return Ok(new { Message = "Login successful" });
-        }
-        catch (UnauthorizedAccessException)
+        Response.Cookies.Append("jwt", token, new CookieOptions
         {
-            return Unauthorized("Ugyldige loginoplysninger.");
-        }
+            HttpOnly = true,
+            Secure = true, 
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTimeOffset.UtcNow.AddHours(1)
+        });
+
+        return Ok(new { Message = "Login successful" });
     }
 
-    // Endpoint til registrering.
+    // Endpoint til registrering
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
     {
@@ -67,25 +58,23 @@ public class AuthController : ControllerBase
         return Ok(new { Success = true });
     }
 
-    // Endpoint til at hente brugeroplysninger.
+    // Endpoint til at hente brugeroplysninger
     [HttpGet("me")]
-    [Authorize]
-    public IActionResult GetUser()
+    public async Task<IActionResult> GetUser()
     {
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-        var userId = User.FindFirst("UserId")?.Value;
+        var token = Request.Cookies["jwt"];
 
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(userId))
-            return Unauthorized("Claims mangler i token.");
+        if (string.IsNullOrWhiteSpace(token))
+            return Unauthorized("Token mangler.");
 
-        return Ok(new
-        {
-            Email = email,
-            UserId = userId
-        });
+        var user = await _getUserByTokenUseCase.ExecuteAsync(token);
+        if (user == null)
+            return Unauthorized("Ugyldigt token.");
+
+        return Ok(new { user.Email, user.Username });
     }
 
-    // Endpoint til logout.
+    // Endpoint til logout
     [HttpPost("logout")]
     public IActionResult Logout()
     {
