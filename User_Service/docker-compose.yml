@@ -7,8 +7,6 @@ services:
     container_name: user-service
     ports:
       - "5001:80"
-    depends_on:
-      - postgres
     env_file:
       - .env
     environment:
@@ -16,22 +14,6 @@ services:
     networks:
       - SEP4_NETWORK
     restart: unless-stopped
-
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: userdb
-      POSTGRES_USER: sep4
-      POSTGRES_PASSWORD: sep4                    
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - SEP4_NETWORK
-
-volumes:
-  pgdata:
 
 networks:
   SEP4_NETWORK:

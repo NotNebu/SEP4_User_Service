@@ -1,4 +1,3 @@
-using SEP4_User_Service.API.Services;
 using Microsoft.EntityFrameworkCore;
 using SEP4_User_Service.Infrastructure.Persistence.Repositories;
 using SEP4_User_Service.Application.Interfaces;
@@ -9,7 +8,6 @@ using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,7 +43,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = context =>
             {
-                // Debug logs fjernet
                 return Task.CompletedTask;
             },
             OnMessageReceived = context =>
@@ -53,7 +50,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var cookieToken = context.Request.Cookies["jwt"];
                 if (!string.IsNullOrEmpty(cookieToken))
                 {
-                    // Debug logs fjernet
                     context.Token = cookieToken;
                 }
                 return Task.CompletedTask;
@@ -73,8 +69,7 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
-// Tilføjer gRPC og API-kontroller til DI-containeren.
-builder.Services.AddGrpc();
+// Tilføjer API-kontroller til DI-containeren.
 builder.Services.AddControllers();
 
 // Registrerer UseCases og services i DI-containeren.
@@ -109,11 +104,7 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Mapper gRPC-tjenester og API-kontrollere.
-app.MapGrpcService<AuthGrpcService>();
-app.MapGrpcService<GrpcUserService>();
-app.MapGrpcService<GrpcExperimentService>();
-app.MapGrpcService<GrpcPredictionService>();
+// Mapper API-kontrollere.
 app.MapControllers();
 
 // Migrerer databasen ved opstart.
