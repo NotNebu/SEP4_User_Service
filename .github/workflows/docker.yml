@@ -63,5 +63,5 @@ jobs:
         file: ./Dockerfile 
         push: true 
         tags: 
-          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
-          ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:${{ github.sha }}
+          - ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:latest
+          - ${{ secrets.DOCKERHUB_USERNAME }}/sep4-user-service:${{ github.sha }}
