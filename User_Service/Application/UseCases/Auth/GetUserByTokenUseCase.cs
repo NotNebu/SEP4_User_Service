@@ -1,23 +1,21 @@
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
 
-namespace SEP4_User_Service.Application.UseCases;
-
-// Use case til at hente en bruger baseret på et JWT-token.
-public class GetUserByTokenUseCase : IGetUserByTokenUseCase
+namespace SEP4_User_Service.Application.UseCases
 {
-    private readonly IAuthService _authService;
-
-    // Initialiserer use case med en autentificeringstjeneste.
-    public GetUserByTokenUseCase(IAuthService authService)
+    public class GetUserByTokenUseCase : IGetUserByTokenUseCase
     {
-        _authService = authService;
-    }
+        private readonly IJwtTokenGenerator _tokenGenerator;
 
-    // Henter en bruger baseret på token.
-    // Returnerer brugerobjektet, hvis tokenet er gyldigt; ellers null.
-    public Task<User?> ExecuteAsync(string token)
-    {
-        return _authService.GetUserByTokenAsync(token);
+        public GetUserByTokenUseCase(IJwtTokenGenerator tokenGenerator)
+        {
+            _tokenGenerator = tokenGenerator;
+        }
+
+        public Task<User?> ExecuteAsync(string token)
+        {
+            var user = _tokenGenerator.ValidateToken(token);
+            return Task.FromResult(user);
+        }
     }
 }

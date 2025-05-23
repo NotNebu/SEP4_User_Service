@@ -87,7 +87,6 @@ builder.Services.AddScoped<GetExperimentByIdUseCase>();
 builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
 builder.Services.AddScoped<IGetUserByTokenUseCase, GetUserByTokenUseCase>();
 builder.Services.AddScoped<ILoginUseCase, LoginUseCase>();
-builder.Services.AddScoped<IAuthService, AuthUserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IChangePasswordUseCase, ChangePasswordUseCase>();
