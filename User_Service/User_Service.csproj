@@ -7,22 +7,8 @@
     <DisableCleanReferencedProjects>true</DisableCleanReferencedProjects>
   </PropertyGroup>
 
-
-  <ItemGroup>
-    <Protobuf Include="Protos/user.proto" GrpcServices="Both" />
-    <Protobuf Include="Protos/auth.proto" GrpcServices="Both" />
-    <Protobuf Include="Protos/experiment.proto" GrpcServices="Both" />
-    <Protobuf Include="Protos/prediction.proto" GrpcServices="Both" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.47.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.47.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.47.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
 
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
@@ -43,8 +29,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.2" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.57.0" />
   </ItemGroup>
 
 </Project>

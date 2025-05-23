@@ -1,4 +1,3 @@
-using SEP4_User_Service.API.Services;
 using Microsoft.EntityFrameworkCore;
 using SEP4_User_Service.Infrastructure.Persistence.Repositories;
 using SEP4_User_Service.Application.Interfaces;
@@ -9,7 +8,6 @@ using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Grpc.AspNetCore.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -73,8 +71,7 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
-// Tilføjer gRPC og API-kontroller til DI-containeren.
-builder.Services.AddGrpc();
+// Tilføjer API-kontroller til DI-containeren.
 builder.Services.AddControllers();
 
 // Registrerer UseCases og services i DI-containeren.
@@ -110,10 +107,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Mapper gRPC-tjenester og API-kontrollere.
-app.MapGrpcService<AuthGrpcService>();
-app.MapGrpcService<GrpcUserService>();
-app.MapGrpcService<GrpcExperimentService>();
-app.MapGrpcService<GrpcPredictionService>();
 app.MapControllers();
 
 // Migrerer databasen ved opstart.
