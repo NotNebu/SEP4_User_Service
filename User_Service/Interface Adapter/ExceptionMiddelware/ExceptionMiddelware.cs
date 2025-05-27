@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Hosting;
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SEP4_User_Service.Application.Exceptions;
 
 namespace SEP4_User_Service.API.ExceptionMiddleware
@@ -13,7 +13,11 @@ namespace SEP4_User_Service.API.ExceptionMiddleware
         private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly IHostEnvironment _env;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
+        public ExceptionMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionMiddleware> logger,
+            IHostEnvironment env
+        )
         {
             _next = next;
             _logger = logger;
@@ -41,21 +45,23 @@ namespace SEP4_User_Service.API.ExceptionMiddleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unhandled exception occurred");
-                var message = _env.IsDevelopment() ? ex.Message : "Der opstod en intern serverfejl.";
+                var message = _env.IsDevelopment()
+                    ? ex.Message
+                    : "Der opstod en intern serverfejl.";
                 await HandleExceptionAsync(context, HttpStatusCode.InternalServerError, message);
             }
         }
 
-        private static async Task HandleExceptionAsync(HttpContext context, HttpStatusCode statusCode, string message)
+        private static async Task HandleExceptionAsync(
+            HttpContext context,
+            HttpStatusCode statusCode,
+            string message
+        )
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
 
-            var response = new
-            {
-                status = context.Response.StatusCode,
-                message
-            };
+            var response = new { status = context.Response.StatusCode, message };
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }

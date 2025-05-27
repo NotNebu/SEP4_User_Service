@@ -1,7 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.Infrastructure.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace SEP4_User_Service.Infrastructure.Persistence.Repositories
 {
@@ -16,8 +16,8 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Repositories
 
         public async Task<List<Prediction>> GetByUserIdAsync(Guid userId)
         {
-            return await _context.Predictions
-                .Where(p => p.UserId == userId)
+            return await _context
+                .Predictions.Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.Timestamp)
                 .ToListAsync();
         }

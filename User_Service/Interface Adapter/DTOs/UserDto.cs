@@ -6,5 +6,3 @@ public class UserDto
     public string Email { get; set; } = default!; // Brugerens emailadresse
     public string Username { get; set; } = default!; // Brugerens brugernavn
 }
-
-

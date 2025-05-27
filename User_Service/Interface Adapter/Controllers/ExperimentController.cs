@@ -1,13 +1,12 @@
+using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SEP4_User_Service.Application.UseCases;
-using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.API.DTOs.Experiment;
 using SEP4_User_Service.Application.Interfaces;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using System.Text.Json;
-
+using SEP4_User_Service.Application.UseCases;
+using SEP4_User_Service.Domain.Entities;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -28,7 +27,8 @@ public class ExperimentController : ControllerBase
         UpdateExperimentUseCase updateUseCase,
         DeleteExperimentUseCase deleteUseCase,
         GetExperimentByIdUseCase getByIdUseCase,
-        IExperimentRepository experimentRepository)
+        IExperimentRepository experimentRepository
+    )
     {
         _createUseCase = createUseCase;
         _updateUseCase = updateUseCase;
@@ -51,7 +51,7 @@ public class ExperimentController : ControllerBase
             Title = dto.Title,
             Description = dto.Description,
             DataJson = JsonSerializer.Serialize(dto.DataJson),
-            UserId = Guid.Parse(userId)
+            UserId = Guid.Parse(userId),
         };
 
         await _createUseCase.ExecuteAsync(experiment);
@@ -67,14 +67,16 @@ public class ExperimentController : ControllerBase
         if (experiment == null)
             return NotFound();
 
-        return Ok(new ExperimentDto
-        {
-            Id = experiment.Id,
-            Title = experiment.Title,
-            Description = experiment.Description,
-            DataJson = experiment.DataJson,
-            CreatedAt = experiment.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
-        });
+        return Ok(
+            new ExperimentDto
+            {
+                Id = experiment.Id,
+                Title = experiment.Title,
+                Description = experiment.Description,
+                DataJson = experiment.DataJson,
+                CreatedAt = experiment.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
+            }
+        );
     }
 
     // Endpoint til at hente alle eksperimenter for den autoriserede bruger.
@@ -94,7 +96,7 @@ public class ExperimentController : ControllerBase
             Title = e.Title,
             Description = e.Description,
             DataJson = e.DataJson,
-            CreatedAt = e.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+            CreatedAt = e.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"),
         });
 
         return Ok(result);
@@ -116,7 +118,6 @@ public class ExperimentController : ControllerBase
         experiment.Title = dto.Title;
         experiment.Description = dto.Description;
         experiment.DataJson = JsonSerializer.Serialize(dto.DataJson);
-
 
         await _updateUseCase.ExecuteAsync(experiment);
         return Ok(new { message = "Eksperiment opdateret." });

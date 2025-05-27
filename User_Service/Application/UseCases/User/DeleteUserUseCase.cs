@@ -15,7 +15,7 @@ public class DeleteUserUseCase
 
     // Sletter en bruger baseret på ID.
     // Returnerer true, hvis sletningen lykkes; ellers false.
-    public async Task<bool> ExecuteAsync(Guid id) 
+    public async Task<bool> ExecuteAsync(Guid id)
     {
         return await _repository.DeleteUserAsync(id);
     }

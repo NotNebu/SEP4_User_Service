@@ -1,7 +1,7 @@
-using SEP4_User_Service.Domain.Entities;
-using SEP4_User_Service.Application.Interfaces;
-using SEP4_User_Service.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
+using SEP4_User_Service.Infrastructure.Persistence.Data;
 
 // Denne klasse implementerer repositoryet for eksperimenter.
 // Den håndterer CRUD-operationer på eksperimentdata i databasen.
@@ -53,8 +53,6 @@ public class ExperimentRepository : IExperimentRepository
     // Returnerer en liste af eksperimenter.
     public async Task<List<Experiment>> GetByUserIdAsync(Guid userId)
     {
-        return await _context.Experiments
-            .Where(e => e.UserId == userId)
-            .ToListAsync();
+        return await _context.Experiments.Where(e => e.UserId == userId).ToListAsync();
     }
 }

@@ -1,19 +1,19 @@
-using Microsoft.EntityFrameworkCore;
-using SEP4_User_Service.Infrastructure.Persistence.Repositories;
-using SEP4_User_Service.Application.Interfaces;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using SEP4_User_Service.Application.UseCases;
-using SEP4_User_Service.Infrastructure.Persistence.Data;
+using System.Text;
+using System.Threading.Tasks;
 using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Application.UseCases;
+using SEP4_User_Service.Infrastructure.Persistence.Data;
+using SEP4_User_Service.Infrastructure.Persistence.Repositories;
 
 // Denne fil konfigurerer og starter applikationen.
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +25,8 @@ builder.Configuration.AddEnvironmentVariables();
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
 builder.Configuration["Jwt:Secret"] = jwtSecret;
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         var key = Encoding.UTF8.GetBytes(jwtSecret!);
@@ -36,7 +37,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
         };
 
         options.Events = new JwtBearerEvents
@@ -53,7 +54,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Token = cookieToken;
                 }
                 return Task.CompletedTask;
-            }
+            },
         };
     });
 
@@ -62,11 +63,14 @@ builder.Services.AddAuthorization();
 // Konfigurerer Kestrel til at lytte på port 5001 og understøtte HTTPS og HTTP/2.
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5001, listenOptions =>
-    {
-        listenOptions.UseHttps("/certs/localhost-user-service.p12", "changeit");
-        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-    });
+    options.ListenAnyIP(
+        5001,
+        listenOptions =>
+        {
+            listenOptions.UseHttps("/certs/localhost-user-service.p12", "changeit");
+            listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        }
+    );
 });
 
 // Tilføjer API-kontroller til DI-containeren.
@@ -94,8 +98,7 @@ builder.Services.AddScoped<IPredictionRepository, PredictionRepository>();
 
 // Konfigurerer Entity Framework Core til at bruge PostgreSQL.
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<UserDbContext>(options => options.UseNpgsql(connectionString));
 
 // Bygger applikationen.
 var app = builder.Build();

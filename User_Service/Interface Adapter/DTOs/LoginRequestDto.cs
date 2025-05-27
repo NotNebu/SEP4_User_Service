@@ -13,4 +13,3 @@ namespace SEP4_User_Service.API.DTOs
         public string Password { get; set; } = default!;
     }
 }
-

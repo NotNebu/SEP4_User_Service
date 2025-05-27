@@ -1,5 +1,5 @@
-using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
 
 // Denne klasse håndterer oprettelsen af et nyt eksperiment.
 // Den bruger IExperimentRepository til at gemme eksperimentet i databasen.

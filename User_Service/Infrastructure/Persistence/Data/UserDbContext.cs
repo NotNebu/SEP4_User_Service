@@ -1,7 +1,7 @@
-using SEP4_User_Service.Domain.Entities;
-using SEP4_User_Service.Application.Interfaces;
-using SEP4_User_Service.Infrastructure.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
+using SEP4_User_Service.Infrastructure.Persistence.Data;
 
 namespace SEP4_User_Service.Infrastructure.Persistence.Data
 {
@@ -9,9 +9,7 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Data
     public class UserDbContext : DbContext
     {
         public UserDbContext(DbContextOptions<UserDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Location> Locations { get; set; }
@@ -26,12 +24,10 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Data
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(u => u.Id);
-                entity.Property(u => u.Id)
-                      .ValueGeneratedOnAdd();
+                entity.Property(u => u.Id).ValueGeneratedOnAdd();
 
                 // Auto-include af Locations relation, så den altid hentes med
-                entity.Navigation(u => u.Locations)
-                      .AutoInclude();
+                entity.Navigation(u => u.Locations).AutoInclude();
 
                 // (Valgfrit) Auto-include eksperimenter
                 // entity.Navigation(u => u.Experiments)
@@ -42,42 +38,40 @@ namespace SEP4_User_Service.Infrastructure.Persistence.Data
             modelBuilder.Entity<Location>(entity =>
             {
                 entity.HasKey(l => l.LocationID);
-                entity.Property(l => l.LocationID)
-                      .ValueGeneratedOnAdd();
+                entity.Property(l => l.LocationID).ValueGeneratedOnAdd();
 
-                entity.HasOne(l => l.User)
-                      .WithMany(u => u.Locations)
-                      .HasForeignKey(l => l.UserID)
-                      .OnDelete(DeleteBehavior.Cascade);
+                entity
+                    .HasOne(l => l.User)
+                    .WithMany(u => u.Locations)
+                    .HasForeignKey(l => l.UserID)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Konfiguration for Experiment-entiteten
             modelBuilder.Entity<Experiment>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id)
-                      .ValueGeneratedOnAdd();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
-                entity.HasOne(e => e.User)
-                      .WithMany(u => u.Experiments)
-                      .HasForeignKey(e => e.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                entity
+                    .HasOne(e => e.User)
+                    .WithMany(u => u.Experiments)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Konfiguration for Prediction-entiteten
             modelBuilder.Entity<Prediction>(entity =>
-         {
-            entity.HasKey(p => p.Id);
-            entity.Property(p => p.Id)
-                .ValueGeneratedOnAdd();
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Id).ValueGeneratedOnAdd();
 
-            entity.HasOne(p => p.User)
-                .WithMany(u => u.Predictions)
-                .HasForeignKey(p => p.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-             });
-
-
+                entity
+                    .HasOne(p => p.User)
+                    .WithMany(u => u.Predictions)
+                    .HasForeignKey(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

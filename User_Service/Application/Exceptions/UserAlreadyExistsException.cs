@@ -6,19 +6,15 @@ namespace SEP4_User_Service.Application.Exceptions
     public class UserAlreadyExistsException : Exception
     {
         // Initialiserer med en specifik fejlbesked
-        public UserAlreadyExistsException(string message) : base(message)
-        {
-        }
+        public UserAlreadyExistsException(string message)
+            : base(message) { }
 
         // Initialiserer med en standardbesked
-        public UserAlreadyExistsException() : base("Bruger med denne email findes allerede.")
-        {
-        }
+        public UserAlreadyExistsException()
+            : base("Bruger med denne email findes allerede.") { }
 
         // Initialiserer med fejlbesked og en inner exception
         public UserAlreadyExistsException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+            : base(message, innerException) { }
     }
 }

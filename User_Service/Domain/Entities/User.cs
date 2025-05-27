@@ -9,6 +9,7 @@ namespace SEP4_User_Service.Domain.Entities
         public string Firstname { get; set; } = string.Empty;
         public string Lastname { get; set; } = string.Empty;
         public string Birthday { get; set; } = string.Empty;
+
         // Adresse‐relation
         public ICollection<Location> Locations { get; set; } = new List<Location>();
 
@@ -17,7 +18,15 @@ namespace SEP4_User_Service.Domain.Entities
 
         public ICollection<Prediction> Predictions { get; set; } = new List<Prediction>();
 
-        public User(string username, string password, string email, string firstname, string lastname, string birthday, ICollection<Location>? locations = null)
+        public User(
+            string username,
+            string password,
+            string email,
+            string firstname,
+            string lastname,
+            string birthday,
+            ICollection<Location>? locations = null
+        )
         {
             Id = Guid.NewGuid();
             Username = username;

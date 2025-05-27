@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SEP4_User_Service.API.DTOs;
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
-using System.Security.Claims;
-using SEP4_User_Service.API.DTOs;
-using System.Text.Json;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -20,7 +20,7 @@ public class PredictionController : ControllerBase
         _repository = repository;
     }
 
-   [HttpPost]
+    [HttpPost]
     public async Task<IActionResult> SavePrediction([FromBody] PredictionRequestDto dto)
     {
         var userId = User.FindFirst("UserId")?.Value;
@@ -35,7 +35,7 @@ public class PredictionController : ControllerBase
             FileName = dto.FileName,
             Input = JsonSerializer.Serialize(dto.Input),
             Result = JsonSerializer.Serialize(dto.Result),
-            Timestamp = DateTime.UtcNow
+            Timestamp = DateTime.UtcNow,
         };
 
         await _repository.AddAsync(prediction);
@@ -69,6 +69,6 @@ public class PredictionController : ControllerBase
             return NotFound("Forudsigelse ikke fundet eller ikke tilladt.");
 
         await _repository.DeleteAsync(prediction);
-        return NoContent(); // 204
+        return NoContent();
     }
 }

@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SEP4_User_Service.API.DTOs;
 using SEP4_User_Service.Application.Interfaces;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -20,7 +20,8 @@ public class AuthController : ControllerBase
     public AuthController(
         ILoginUseCase loginUseCase,
         IRegisterUseCase registerUseCase,
-        IGetUserByTokenUseCase getUserByTokenUseCase)
+        IGetUserByTokenUseCase getUserByTokenUseCase
+    )
     {
         _loginUseCase = loginUseCase;
         _registerUseCase = registerUseCase;
@@ -35,13 +36,17 @@ public class AuthController : ControllerBase
         {
             var token = await _loginUseCase.ExecuteAsync(request.Email, request.Password);
 
-            Response.Cookies.Append("jwt", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true, // vigtigt for HTTPS
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddHours(1)
-            });
+            Response.Cookies.Append(
+                "jwt",
+                token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true, // vigtigt for HTTPS
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1),
+                }
+            );
 
             return Ok(new { Message = "Login successful" });
         }
@@ -78,24 +83,24 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(userId))
             return Unauthorized("Claims mangler i token.");
 
-        return Ok(new
-        {
-            Email = email,
-            UserId = userId
-        });
+        return Ok(new { Email = email, UserId = userId });
     }
 
     // Endpoint til logout.
     [HttpPost("logout")]
     public IActionResult Logout()
     {
-        Response.Cookies.Append("jwt", "", new CookieOptions
-        {
-            Expires = DateTimeOffset.UtcNow.AddDays(-1),
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict
-        });
+        Response.Cookies.Append(
+            "jwt",
+            "",
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(-1),
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+            }
+        );
 
         return Ok(new { Message = "Logout successful" });
     }

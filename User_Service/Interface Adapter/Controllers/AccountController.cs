@@ -1,9 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SEP4_User_Service.Domain.Entities;
 using SEP4_User_Service.API.DTOs;
-using System.Security.Claims;
 using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
 
 namespace SEP4_User_Service.API.Controllers;
 
@@ -16,7 +16,10 @@ public class AccountController : ControllerBase
     private readonly IUserRepository _userRepository;
 
     // Constructor til at injicere afhængigheder.
-    public AccountController(IChangePasswordUseCase changePasswordUseCase, IUserRepository userRepository)
+    public AccountController(
+        IChangePasswordUseCase changePasswordUseCase,
+        IUserRepository userRepository
+    )
     {
         _changePasswordUseCase = changePasswordUseCase;
         _userRepository = userRepository;
@@ -39,7 +42,9 @@ public class AccountController : ControllerBase
         );
 
         if (!success)
-            return BadRequest(new { message = "Gammelt kodeord er forkert eller bruger ikke fundet." });
+            return BadRequest(
+                new { message = "Gammelt kodeord er forkert eller bruger ikke fundet." }
+            );
 
         return Ok(new { message = "Kodeord opdateret." });
     }
@@ -59,18 +64,20 @@ public class AccountController : ControllerBase
 
         var location = user.Locations.FirstOrDefault();
 
-        return Ok(new UserProfileDto
-        {
-            Firstname = user.Firstname,
-            Lastname = user.Lastname,
-            Username = user.Username,
-            Email = user.Email,
-            Birthday = user.Birthday,
-            Country = location?.Country ?? "",
-            Street = location?.Street ?? "",
-            HouseNumber = location?.HouseNumber ?? "",
-            City = location?.City ?? ""
-        });
+        return Ok(
+            new UserProfileDto
+            {
+                Firstname = user.Firstname,
+                Lastname = user.Lastname,
+                Username = user.Username,
+                Email = user.Email,
+                Birthday = user.Birthday,
+                Country = location?.Country ?? "",
+                Street = location?.Street ?? "",
+                HouseNumber = location?.HouseNumber ?? "",
+                City = location?.City ?? "",
+            }
+        );
     }
 
     // Endpoint til at opdatere brugerens profil.
@@ -101,7 +108,7 @@ public class AccountController : ControllerBase
                 HouseNumber = dto.HouseNumber,
                 City = dto.City,
                 Country = dto.Country,
-                UserID = user.Id
+                UserID = user.Id,
             };
             user.Locations.Add(location);
         }
@@ -117,4 +124,3 @@ public class AccountController : ControllerBase
         return Ok(new { message = "Profil opdateret." });
     }
 }
-

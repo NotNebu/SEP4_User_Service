@@ -1,7 +1,7 @@
 using System;
+using BCrypt.Net;
 using SEP4_User_Service.Application.Interfaces;
 using SEP4_User_Service.Domain.Entities;
-using BCrypt.Net; 
 
 /// <summary>
 /// Implementering af autentificeringstjenesten, som håndterer login, registrering og validering af brugere.
@@ -31,33 +31,20 @@ public class AuthUserService : IAuthService
     /// <exception cref="UnauthorizedAccessException">Kastes hvis loginoplysningerne er ugyldige.</exception>
     public async Task<string> LoginAsync(string email, string password)
     {
-        Console.WriteLine($"Login attempt for: {email}");
-
         var user = await _userRepository.GetUserByEmailAsync(email);
 
         if (user == null)
-        {
-            Console.WriteLine("Bruger ikke fundet.");
             throw new UnauthorizedAccessException("Ugyldige legitimationsoplysninger");
-        }
-
-        Console.WriteLine($"Bruger fundet: {user.Email}");
 
         if (string.IsNullOrEmpty(user.Password))
-        {
-            Console.WriteLine("Brugerens password er null eller tomt!");
-        }
+            throw new UnauthorizedAccessException("Brugerens adgangskode er ugyldig");
 
         var passwordMatch = BCrypt.Net.BCrypt.Verify(password, user.Password);
-        Console.WriteLine($"Password match: {passwordMatch}");
 
         if (!passwordMatch)
             throw new UnauthorizedAccessException("Ugyldige legitimationsoplysninger");
 
-        var token = _tokenGenerator.GenerateToken(user);
-        Console.WriteLine("Token genereret");
-
-        return token;
+        return _tokenGenerator.GenerateToken(user);
     }
 
     /// <summary>
@@ -69,10 +56,8 @@ public class AuthUserService : IAuthService
     /// <returns>True hvis registreringen lykkes; ellers false hvis brugeren allerede findes.</returns>
     public async Task<bool> RegisterAsync(string email, string password, string username)
     {
-        
-if (await _userRepository.GetUserByEmailAsync(email) != null)
-    return false;
-
+        if (await _userRepository.GetUserByEmailAsync(email) != null)
+            return false;
 
         var user = new User
         {
@@ -95,5 +80,4 @@ if (await _userRepository.GetUserByEmailAsync(email) != null)
     {
         return _tokenGenerator.ValidateToken(token);
     }
-    
 }

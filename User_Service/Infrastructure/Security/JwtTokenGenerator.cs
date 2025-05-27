@@ -1,10 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using SEP4_User_Service.Application.Interfaces;
-using SEP4_User_Service.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SEP4_User_Service.Application.Interfaces;
+using SEP4_User_Service.Domain.Entities;
 
 namespace Infrastructure.Security;
 
